@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/movie_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/movie_poster"
+        android:contentDescription="@string/movie_poster"
+        android:layout_width="match_parent"
+        android:layout_height="277dp"
+        android:layout_margin="@dimen/medium_margin"
+        android:scaleType="fitCenter"/>
+
+    <View
+        android:id="@+id/poster_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="@dimen/large_margin"
+        android:background="@color/colorLight" />
+</LinearLayout>

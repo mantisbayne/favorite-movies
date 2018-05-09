@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/movie_review_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin"
+        android:layout_marginStart="@dimen/large_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        tools:text="Meredith Bayne" />
+
+    <TextView
+        android:id="@+id/movie_review_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/large_margin"
+        android:layout_marginStart="@dimen/large_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        tools:text="This is a review of a movie that I liked I guess, whatever see it !!!!!!!!!!" />
+
+    <View
+        android:id="@+id/review_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="@dimen/large_margin"
+        android:background="@color/colorLight" />
+
+</LinearLayout>
