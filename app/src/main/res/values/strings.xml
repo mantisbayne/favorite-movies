@@ -22,7 +22,6 @@
     <string name="added_to_favorites">Added to favorites!</string>
     <string name="play_trailer_button">Play trailer button</string>
 
-
     <string name="sort_by_popular">popular</string>
-    <string name="sort_by_rating">top_rated</string>
+    <string name="sort_by_top_rated">top_rated</string>
 </resources>

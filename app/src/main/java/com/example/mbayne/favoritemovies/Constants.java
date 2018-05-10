@@ -1,7 +1,8 @@
 package com.example.mbayne.favoritemovies;
 
 public class Constants {
-    public static final String MOVIES_BASE_URL = "https://api.themoviedb.org/3/movie";
+    public static final String MOVIES_BASE_URL = "https://api.themoviedb.org/3/";
+    public static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
     public static final String TRAILERS_PATH = "videos";
     public static final String REVIEWS_PATH = "reviews";

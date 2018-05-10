@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 public class MovieContract {
 
     // Authority should be the same as in teh android manifest
-    public static final String AUTHORITY ="com.meredithbayne.toppopularmovies";
+    public static final String AUTHORITY ="com.example.mbayne.favoritemovies";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 

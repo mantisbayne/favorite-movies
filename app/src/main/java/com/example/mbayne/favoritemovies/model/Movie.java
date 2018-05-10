@@ -8,117 +8,86 @@ import com.google.gson.annotations.SerializedName;
 import java.text.DateFormat;
 import java.util.Date;
 
+import static com.example.mbayne.favoritemovies.Constants.POSTER_BASE_URL;
+
 /**
  * Movie object representation of response from server
  */
 
-public class Movie implements Parcelable {
-    private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
-
-    @SerializedName("id")
-    private int id;
-
-    @SerializedName("original_title")
-    private String originalTitle;
-
-    @SerializedName("overview")
-    private String overview;
-
+public class Movie {
     @SerializedName("poster_path")
     private String posterPath;
-
+    @SerializedName("overview")
+    private String overview;
     @SerializedName("release_date")
-    private Date releaseDate;
-
+    private String releaseDate;
+    @SerializedName("id")
+    private Integer id;
+    @SerializedName("original_title")
+    private String originalTitle;
+    @SerializedName("title")
+    private String title;
+    @SerializedName("popularity")
+    private Double popularity;
+    @SerializedName("vote_count")
+    private Integer voteCount;
+    @SerializedName("video")
+    private Boolean video;
     @SerializedName("vote_average")
     private Double voteAverage;
 
-    /**
-     * Implementation of a Movie object
-     * @param releaseDate - date film was released to public
-     * @param posterPath - path to image file for movie poster
-     * @param originalTitle - title of film in its original language
-     * @param voteAverage - rating based on user votes
-     * @param overview - plot summary for the film
-     */
-    public Movie(int id, String originalTitle, String overview,
-                   String posterPath, Date releaseDate, Double voteAverage) {
-        super();
-
+    public Movie(String posterPath, String overview, String releaseDate, Integer id,
+                 String originalTitle, String title, Double popularity, Integer voteCount,
+                 Boolean video, Double voteAverage) {
+        this.posterPath = posterPath;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
         this.id = id;
         this.originalTitle = originalTitle;
-        this.overview = overview;
-        this.posterPath = posterPath;
-        this.releaseDate = releaseDate;
+        this.title = title;
+        this.popularity = popularity;
+        this.voteCount = voteCount;
+        this.video = video;
         this.voteAverage = voteAverage;
-    }
-
-    protected Movie(Parcel in) {
-        id = in.readInt();
-        originalTitle = in.readString();
-        overview = in.readString();
-        posterPath = in.readString();
-        long tmpDate = in.readLong();
-        releaseDate = tmpDate == -1 ? null : new Date(tmpDate);
-        voteAverage = in.readDouble();
-    }
-
-    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel in) {
-            return new Movie(in);
-        }
-
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
-
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public String getOverview() {
-        return overview;
     }
 
     public String getPosterPath() {
         return POSTER_BASE_URL + posterPath;
     }
 
-    public String formatDate(DateFormat dateFormat) {
-        return dateFormat.format(releaseDate);
+    public String getOverview() {
+        return overview;
     }
 
-    public String formatVoteAverage() {
-        return voteAverage.toString() + "/10";
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public Date getReleaseDate() {
-        return releaseDate;
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Double getPopularity() {
+        return popularity;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public Boolean getVideo() {
+        return video;
     }
 
     public Double getVoteAverage() {
         return voteAverage;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(originalTitle);
-        dest.writeString(overview);
-        dest.writeString(posterPath);
-        dest.writeLong(releaseDate != null ? releaseDate.getTime() : -1);
-        dest.writeDouble(voteAverage);
     }
 }

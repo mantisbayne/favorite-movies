@@ -10,13 +10,6 @@
         android:contentDescription="@string/movie_poster"
         android:layout_width="match_parent"
         android:layout_height="277dp"
-        android:layout_margin="@dimen/medium_margin"
+        android:layout_margin="@dimen/small_margin"
         android:scaleType="fitCenter"/>
-
-    <View
-        android:id="@+id/poster_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="@dimen/large_margin"
-        android:background="@color/colorLight" />
 </LinearLayout>
