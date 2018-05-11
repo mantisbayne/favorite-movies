@@ -1,5 +1,6 @@
 package com.example.mbayne.favoritemovies.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mbayne.favoritemovies.BuildConfig;
 import com.example.mbayne.favoritemovies.R;
@@ -33,6 +33,7 @@ public class MovieListActivity extends AppCompatActivity
     private static final String TAG = MovieListActivity.class.getSimpleName();
     private static final int SPAN_COUNT = 2;
     private static final String STATE_SORTED_BY = "sorted_by";
+    private static final String EXTRA_MOVIE = "movie";
 
     @BindView(R.id.movies_error)
     TextView mErrorMessage;
@@ -43,7 +44,10 @@ public class MovieListActivity extends AppCompatActivity
     @BindView(R.id.loading_indicator)
     ProgressBar mLoading;
 
+    MoviesAdapter adapter;
     SortType sortedBy;
+    List<Movie> movies;
+    Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +75,11 @@ public class MovieListActivity extends AppCompatActivity
         call.enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(Call<MovieList> call, Response<MovieList> response) {
-                List<Movie> movies = response.body().getResults();
+                movies = response.body().getResults();
+                adapter = new MoviesAdapter(movies, R.layout.movie_list_item,
+                        getApplicationContext(), listener);
 
-                mMovieRecyclerView.setAdapter(new MoviesAdapter(movies, R.layout.movie_list_item,
-                        getApplicationContext(), listener));
+                mMovieRecyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -97,12 +102,15 @@ public class MovieListActivity extends AppCompatActivity
     }
 
     private void handleMovieItemClick(int position) {
-        Toast.makeText(this, "CLICKED!", Toast.LENGTH_SHORT).show();
+        movie = adapter.getItem(position);
+        Intent detailsIntent = new Intent(this, MovieDetailsActivity.class);
+        detailsIntent.putExtra(EXTRA_MOVIE, movie);
+        startActivity(detailsIntent);
     }
 
     @Override
     public void onMovieItemClick(int position) {
-
+        // not needed
     }
 
     @Override

@@ -19,20 +19,20 @@ import butterknife.ButterKnife;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>  {
     private List<Movie> movies;
-    private int rowLayout;
+    private int itemLayout;
     private Context context;
-    private MoviesAdapterClickListener mListener;
+    private MoviesAdapterClickListener listener;
 
 
     public interface MoviesAdapterClickListener {
         void onMovieItemClick(int position);
     }
 
-    public MoviesAdapter(List<Movie> movies, int rowLayout, Context context, MoviesAdapterClickListener mListener) {
+    public MoviesAdapter(List<Movie> movies, int itemLayout, Context context, MoviesAdapterClickListener listener) {
         this.movies = movies;
-        this.rowLayout = rowLayout;
+        this.itemLayout = itemLayout;
         this.context = context;
-        this.mListener = mListener;
+        this.listener = listener;
     }
 
     @Override
@@ -64,6 +64,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         return movies.size();
     }
 
+    public Movie getItem(int id) {
+        return movies == null ? null : movies.get(id);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.movie_poster)
         ImageView mImageView;
@@ -72,7 +76,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            mImageView.setOnClickListener(v -> mListener.onMovieItemClick(getAdapterPosition()));
+            mImageView.setOnClickListener(v -> listener.onMovieItemClick(getAdapterPosition()));
         }
     }
 }

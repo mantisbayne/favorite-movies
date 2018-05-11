@@ -19,6 +19,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <activity
+            android:name=".activity.MovieDetailsActivity"
+            android:label="@string/title_movie_detail"
+            android:parentActivityName=".activity.MovieListActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.mbayne.favoritemovies.activity.MovieListActivity" />
+        </activity>
+
+        <provider
+            android:authorities="com.example.mbayne.favoritemovies"
+            android:name=".data.MovieContentProvider"
+            android:exported="false"/>
+    </application>
 </manifest>
