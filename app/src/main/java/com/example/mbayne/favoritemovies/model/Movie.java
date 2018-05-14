@@ -169,6 +169,10 @@ public class Movie implements Parcelable {
         return voteAverage;
     }
 
+    public String getRating() {
+        return voteAverage.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

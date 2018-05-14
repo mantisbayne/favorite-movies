@@ -33,7 +33,7 @@ public class MovieListActivity extends AppCompatActivity
     private static final String TAG = MovieListActivity.class.getSimpleName();
     private static final int SPAN_COUNT = 2;
     private static final String STATE_SORTED_BY = "sorted_by";
-    private static final String EXTRA_MOVIE = "movie";
+    public static final String EXTRA_MOVIE = "movie";
 
     @BindView(R.id.movies_error)
     TextView mErrorMessage;
