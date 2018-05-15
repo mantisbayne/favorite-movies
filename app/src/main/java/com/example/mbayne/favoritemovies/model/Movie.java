@@ -170,7 +170,7 @@ public class Movie implements Parcelable {
     }
 
     public String getRating() {
-        return voteAverage.toString();
+        return voteAverage.toString() + "/10";
     }
 
     @Override

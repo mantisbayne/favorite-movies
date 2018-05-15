@@ -6,8 +6,7 @@
     <string name="rating">Rating</string>
     <string name="title_movie_detail">Movie Details</string>
     <string name="release_date">Release date</string>
-    <string name="user_rating">User rating</string>
-    <string name="favorite">Favorite</string>
+    <string name="favorite">Add favorite: </string>
     <string name="reviews">Reviews</string>
     <string name="trailers">Trailers</string>
 
