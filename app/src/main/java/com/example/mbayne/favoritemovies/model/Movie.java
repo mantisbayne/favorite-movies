@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 import static com.example.mbayne.favoritemovies.Constants.POSTER_BASE_URL;
@@ -39,7 +37,7 @@ public class Movie implements Parcelable {
 
     public Movie(String posterPath, String overview, String releaseDate, Integer id,
                  String originalTitle, String title, Double popularity, Integer voteCount,
-                 Boolean video, Double voteAverage) {
+                 Boolean video, Double voteAverage, TrailerList trailerList, ReviewList reviewList) {
         this.posterPath = posterPath;
         this.overview = overview;
         this.releaseDate = releaseDate;
@@ -170,7 +168,7 @@ public class Movie implements Parcelable {
     }
 
     public String getRating() {
-        return voteAverage.toString() + "/10";
+        return voteAverage.toString();
     }
 
     @Override

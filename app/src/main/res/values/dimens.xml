@@ -12,5 +12,5 @@
     <dimen name="poster_height">277dp</dimen>
     <dimen name="movie_title_height">128dp</dimen>
     <dimen name="large_padding">16dp</dimen>
-    <dimen name="image_size">48dp</dimen>
+    <dimen name="image_size">64dp</dimen>
 </resources>

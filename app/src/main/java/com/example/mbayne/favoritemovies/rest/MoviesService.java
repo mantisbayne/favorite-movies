@@ -2,6 +2,8 @@ package com.example.mbayne.favoritemovies.rest;
 
 import com.example.mbayne.favoritemovies.model.Movie;
 import com.example.mbayne.favoritemovies.model.MovieList;
+import com.example.mbayne.favoritemovies.model.ReviewList;
+import com.example.mbayne.favoritemovies.model.TrailerList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -15,6 +17,9 @@ public interface MoviesService {
     @GET("movie/popular")
     Call<MovieList> getPopularMovies(@Query("api_key") String apiKey);
 
-    @GET("movie/{movieId}?append_to_response=videos,reviews")
-    Call<Movie> getMovie(@Path("movieId") int movieId, @Query("api_key") String apiKey);
+    @GET("movie/{movieId}/videos")
+    Call<TrailerList> getTrailers(@Path("movieId") int movieId, @Query("api_key") String apiKey);
+
+    @GET("movie/{movieId}/reviews")
+    Call<ReviewList> getReviews(@Path("movieId") int movieId, @Query("api_key") String apiKey);
 }

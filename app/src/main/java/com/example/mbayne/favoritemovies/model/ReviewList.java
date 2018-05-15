@@ -1,5 +1,8 @@
 package com.example.mbayne.favoritemovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,7 +12,7 @@ import java.util.List;
  * Data model for list of reviews for a movie
  */
 
-public class ReviewList {
+public class ReviewList implements Parcelable {
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -55,5 +58,15 @@ public class ReviewList {
 
     public Integer getTotalReviews() {
         return totalReviews;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }
