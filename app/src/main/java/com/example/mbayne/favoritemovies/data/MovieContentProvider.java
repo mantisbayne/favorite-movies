@@ -118,8 +118,8 @@ public class MovieContentProvider extends ContentProvider {
         switch (match) {
             case MOVIE_WITH_ID:
                 String tId = uri.getPathSegments().get(1);
-
-                moviesDeleted = database.delete(TABLE_NAME, "_id=?", new String[]{tId});
+                moviesDeleted = database.delete(TABLE_NAME, "movie_id=?",
+                        new String[]{tId});
                 break;
              default:
                  throw new UnsupportedOperationException("Unknown uri: " + uri);

@@ -1,5 +1,6 @@
 package com.example.mbayne.favoritemovies.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,9 +14,11 @@ import com.example.mbayne.favoritemovies.model.Review;
 import java.util.List;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
+    private Context context;
     private List<Review> reviewList;
 
-    public ReviewAdapter(List<Review> reviews) {
+    public ReviewAdapter(Context context, List<Review> reviews) {
+        this.context = context;
         this.reviewList = reviews;
     }
 

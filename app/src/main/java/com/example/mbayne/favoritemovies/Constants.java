@@ -9,7 +9,7 @@ public class Constants {
     public static final String MOVIE_ID_PATH = "movie_id";
     public static final String API_KEY_PARAM = "api_key";
 
-    public static final String TRAILER_BASE_URL = "https://www.youtube.com/";
+    public static final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
     public static final String TRAILER_IMAGE = "https://img.youtube.com/vi/";
 
     public static final String TRAILER_WATCH_PATH = "watch";

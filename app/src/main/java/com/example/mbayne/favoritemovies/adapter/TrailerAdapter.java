@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.mbayne.favoritemovies.Constants;
 import com.example.mbayne.favoritemovies.R;
 import com.example.mbayne.favoritemovies.model.Trailer;
 
@@ -19,7 +20,7 @@ import java.util.List;
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerViewHolder> {
     private Context context;
     private List<Trailer> trailerList;
-    private static final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
+    private static final String TRAILER_BASE_URL = Constants.TRAILER_BASE_URL;
 
     public TrailerAdapter(Context context, List<Trailer> trailerList) {
         this.context = context;

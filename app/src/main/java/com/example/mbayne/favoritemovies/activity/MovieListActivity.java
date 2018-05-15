@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -39,10 +40,10 @@ public class MovieListActivity extends AppCompatActivity
     TextView mErrorMessage;
 
     @BindView(R.id.movies_list)
-    RecyclerView mMovieRecyclerView;
+    RecyclerView movieList;
 
     @BindView(R.id.loading_indicator)
-    ProgressBar mLoading;
+    ProgressBar loading;
 
     MoviesAdapter adapter;
     SortType sortedBy;
@@ -56,8 +57,8 @@ public class MovieListActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         LinearLayoutManager layoutManager = new GridLayoutManager(this, SPAN_COUNT);
-        mMovieRecyclerView.setLayoutManager(layoutManager);
-        mMovieRecyclerView.setHasFixedSize(true);
+        movieList.setLayoutManager(layoutManager);
+        movieList.setHasFixedSize(true);
 
         MoviesAdapter.MoviesAdapterClickListener listener = this::handleMovieItemClick;
 
@@ -79,7 +80,10 @@ public class MovieListActivity extends AppCompatActivity
                 adapter = new MoviesAdapter(movies, R.layout.movie_list_item,
                         getApplicationContext(), listener);
 
-                mMovieRecyclerView.setAdapter(adapter);
+                movieList.setAdapter(adapter);
+
+                loading.setVisibility(View.GONE);
+                movieList.setVisibility(View.VISIBLE);
             }
 
             @Override

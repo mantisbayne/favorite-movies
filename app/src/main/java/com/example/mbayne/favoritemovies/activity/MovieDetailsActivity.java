@@ -1,6 +1,9 @@
 package com.example.mbayne.favoritemovies.activity;
 
-import android.content.Context;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -9,15 +12,19 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mbayne.favoritemovies.BuildConfig;
+import com.example.mbayne.favoritemovies.Constants;
 import com.example.mbayne.favoritemovies.R;
-import com.example.mbayne.favoritemovies.adapter.MoviesAdapter;
+import com.example.mbayne.favoritemovies.adapter.ReviewAdapter;
 import com.example.mbayne.favoritemovies.adapter.TrailerAdapter;
+import com.example.mbayne.favoritemovies.data.MovieContract;
 import com.example.mbayne.favoritemovies.model.Movie;
-import com.example.mbayne.favoritemovies.model.MovieList;
+import com.example.mbayne.favoritemovies.model.Review;
 import com.example.mbayne.favoritemovies.model.ReviewList;
 import com.example.mbayne.favoritemovies.model.Trailer;
 import com.example.mbayne.favoritemovies.model.TrailerList;
@@ -25,19 +32,19 @@ import com.example.mbayne.favoritemovies.rest.Client;
 import com.example.mbayne.favoritemovies.rest.MoviesService;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     private static final String TAG = MovieDetailsActivity.class.getSimpleName();
+    private static final String STATE_FAVORITE = "favorite";
 
     @BindView(R.id.movie_details_title)
     TextView title;
@@ -59,6 +66,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     ImageView favoriteIcon;
 
     private Movie movie;
+    List<Trailer> trailerList;
     private boolean isFavorite;
 
     @Override
@@ -81,11 +89,22 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
         }
 
-        favoriteIcon.setOnClickListener(view -> addToFavorites());
+        if (savedInstanceState != null)
+            isFavorite = savedInstanceState.getBoolean(STATE_FAVORITE);
+        else
+            isFavorite = isFavorite();
+
+        if (isFavorite)
+            favoriteIcon.setImageResource(R.drawable.ic_favorite);
+        else
+            favoriteIcon.setImageResource(R.drawable.ic_favorite_border);
+
+        favoriteIcon.setOnClickListener(view -> toggleFavorite());
 
         MoviesService service = Client.getMoviesClient().create(MoviesService.class);
 
         loadTrailers(service);
+        loadReviews(service);
     }
 
     private void loadReviews(MoviesService service) {
@@ -93,7 +112,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<ReviewList>() {
             @Override
             public void onResponse(Call<ReviewList> call, Response<ReviewList> response) {
-
+                List<Review> reviewList = response.body().getReviews();
+                if (reviewList.size() > 0) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(reviews.getContext(),
+                            LinearLayoutManager.VERTICAL, false);
+                    reviews.setLayoutManager(layoutManager);
+                    reviews.setHasFixedSize(true);
+                    reviews.setAdapter(new ReviewAdapter(reviews.getContext(), reviewList));
+                }
             }
 
             @Override
@@ -108,7 +134,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<TrailerList>() {
             @Override
             public void onResponse(Call<TrailerList> call, Response<TrailerList> response) {
-                List<Trailer> trailerList = response.body().getTrailers();
+                trailerList = response.body().getTrailers();
                 if (trailerList.size() > 0) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(trailers.getContext(),
                             LinearLayoutManager.HORIZONTAL, false);
@@ -125,8 +151,51 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void addToFavorites() {
+    private boolean isFavorite() {
+        final Cursor cursor = getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                "movie_id=?",
+                new String[]{String.valueOf(movie.getId())},
+                null);
 
+        return cursor != null && cursor.getCount() > 0;
+    }
+
+    private void toggleFavorite() {
+        updateFavoriteView();
+
+        if (isFavorite) {
+            Uri uri = MovieContract.MovieEntry.CONTENT_URI;
+            uri = uri.buildUpon().appendPath(String.valueOf(movie.getId())).build();
+            getContentResolver().delete(uri, null, null);
+            getContentResolver().notifyChange(uri, null);
+            Toast.makeText(getApplicationContext(), movie.getTitle()
+                    + " has been removed from favorites", Toast.LENGTH_SHORT).show();
+        } else {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MovieContract.MovieEntry.COLUMN_ID, movie.getId());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+
+            Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+            if (uri != null) {
+                Toast.makeText(getApplicationContext(), movie.getTitle()
+                        + " has been added to favorites", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        isFavorite = isFavorite();
+    }
+
+    private void updateFavoriteView() {
+        if (!isFavorite) {
+            favoriteIcon.setImageResource(R.drawable.ic_favorite);
+        } else {
+            favoriteIcon.setImageResource(R.drawable.ic_favorite_border);
+        }
     }
 
     private void loadPoster(String posterPath, ImageView poster) {
@@ -152,6 +221,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void shareMovie() {
-        
+        Trailer trailer = trailerList.get(0);
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, trailer.getName());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, Constants.TRAILER_BASE_URL + trailer.getKey());
+        startActivity(shareIntent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_FAVORITE, isFavorite);
     }
 }
