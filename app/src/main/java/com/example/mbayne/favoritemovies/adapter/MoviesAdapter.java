@@ -1,6 +1,7 @@
 package com.example.mbayne.favoritemovies.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 
 import com.example.mbayne.favoritemovies.R;
 import com.example.mbayne.favoritemovies.model.Movie;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -49,11 +51,25 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         Movie movie = movies.get(position);
 
         Picasso.Builder builder = new Picasso.Builder(context);
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        });
         builder.build().load(movie.getPosterPath())
                 .noFade()
-                .placeholder(R.drawable.ic_movie_black)
                 .error(R.drawable.ic_error_outline_black)
-                .into(holder.mImageView);
+                .into(holder.poster, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
     @Override
@@ -64,19 +80,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         return movies.size();
     }
 
+    public void setMovieData(List<Movie> movieData) {
+        movies = movieData;
+        notifyDataSetChanged();
+    }
+
     public Movie getItem(int id) {
         return movies == null ? null : movies.get(id);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.movie_poster)
-        ImageView mImageView;
+        ImageView poster;
 
         private ViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            mImageView.setOnClickListener(v -> listener.onMovieItemClick(getAdapterPosition()));
+            poster.setOnClickListener(v -> listener.onMovieItemClick(getAdapterPosition()));
         }
     }
 }

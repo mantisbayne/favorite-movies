@@ -202,7 +202,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         Picasso.Builder builder = new Picasso.Builder(getApplicationContext());
         builder.build().load(posterPath)
                 .noFade()
-                .placeholder(R.drawable.ic_movie_black)
                 .error(R.drawable.ic_error_outline_black)
                 .into(poster);
     }

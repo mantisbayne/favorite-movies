@@ -26,27 +26,16 @@ public class Movie implements Parcelable {
     private String originalTitle;
     @SerializedName("title")
     private String title;
-    @SerializedName("popularity")
-    private Double popularity;
-    @SerializedName("vote_count")
-    private Integer voteCount;
-    @SerializedName("video")
-    private Boolean video;
     @SerializedName("vote_average")
     private Double voteAverage;
 
-    public Movie(String posterPath, String overview, String releaseDate, Integer id,
-                 String originalTitle, String title, Double popularity, Integer voteCount,
-                 Boolean video, Double voteAverage, TrailerList trailerList, ReviewList reviewList) {
+    public Movie(String posterPath, String overview, String releaseDate, Integer id, String title,
+                 Double voteAverage) {
         this.posterPath = posterPath;
         this.overview = overview;
         this.releaseDate = releaseDate;
         this.id = id;
-        this.originalTitle = originalTitle;
         this.title = title;
-        this.popularity = popularity;
-        this.voteCount = voteCount;
-        this.video = video;
         this.voteAverage = voteAverage;
     }
 
@@ -60,20 +49,7 @@ public class Movie implements Parcelable {
         } else {
             id = in.readInt();
         }
-        originalTitle = in.readString();
         title = in.readString();
-        if (in.readByte() == 0) {
-            popularity = null;
-        } else {
-            popularity = in.readDouble();
-        }
-        if (in.readByte() == 0) {
-            voteCount = null;
-        } else {
-            voteCount = in.readInt();
-        }
-        byte tmpVideo = in.readByte();
-        video = tmpVideo == 0 ? null : tmpVideo == 1;
         if (in.readByte() == 0) {
             voteAverage = null;
         } else {
@@ -104,21 +80,7 @@ public class Movie implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(id);
         }
-        dest.writeString(originalTitle);
         dest.writeString(title);
-        if (popularity == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(popularity);
-        }
-        if (voteCount == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeInt(voteCount);
-        }
-        dest.writeByte((byte) (video == null ? 0 : video ? 1 : 2));
         if (voteAverage == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -143,24 +105,8 @@ public class Movie implements Parcelable {
         return id;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public Double getPopularity() {
-        return popularity;
-    }
-
-    public Integer getVoteCount() {
-        return voteCount;
-    }
-
-    public Boolean getVideo() {
-        return video;
     }
 
     public Double getVoteAverage() {
@@ -169,6 +115,34 @@ public class Movie implements Parcelable {
 
     public String getRating() {
         return voteAverage.toString();
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setVoteAverage(Double voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
     @Override
@@ -180,19 +154,14 @@ public class Movie implements Parcelable {
                 Objects.equals(overview, movie.overview) &&
                 Objects.equals(releaseDate, movie.releaseDate) &&
                 Objects.equals(id, movie.id) &&
-                Objects.equals(originalTitle, movie.originalTitle) &&
                 Objects.equals(title, movie.title) &&
-                Objects.equals(popularity, movie.popularity) &&
-                Objects.equals(voteCount, movie.voteCount) &&
-                Objects.equals(video, movie.video) &&
                 Objects.equals(voteAverage, movie.voteAverage);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(posterPath, overview, releaseDate, id, originalTitle, title, popularity,
-                voteCount, video, voteAverage);
+        return Objects.hash(posterPath, overview, releaseDate, id, originalTitle, title, voteAverage);
     }
 
     @Override

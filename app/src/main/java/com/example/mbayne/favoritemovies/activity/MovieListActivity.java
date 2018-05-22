@@ -1,7 +1,13 @@
 package com.example.mbayne.favoritemovies.activity;
 
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,11 +22,13 @@ import android.widget.TextView;
 import com.example.mbayne.favoritemovies.BuildConfig;
 import com.example.mbayne.favoritemovies.R;
 import com.example.mbayne.favoritemovies.adapter.MoviesAdapter;
+import com.example.mbayne.favoritemovies.data.MovieContract;
 import com.example.mbayne.favoritemovies.model.Movie;
 import com.example.mbayne.favoritemovies.model.MovieList;
 import com.example.mbayne.favoritemovies.rest.Client;
 import com.example.mbayne.favoritemovies.rest.MoviesService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,18 +38,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MovieListActivity extends AppCompatActivity
-        implements MoviesAdapter.MoviesAdapterClickListener {
+        implements MoviesAdapter.MoviesAdapterClickListener,
+        LoaderManager.LoaderCallbacks<List<Movie>> {
     private static final String TAG = MovieListActivity.class.getSimpleName();
     private static final int SPAN_COUNT = 2;
     private static final String STATE_SORTED_BY = "sorted_by";
     public static final String EXTRA_MOVIE = "movie";
+    private static final int MOVIE_LOADER_ID = 8;
 
     @BindView(R.id.movies_error)
-    TextView mErrorMessage;
-
+    TextView errorMessage;
     @BindView(R.id.movies_list)
     RecyclerView movieList;
-
+    @BindView(R.id.favorites_empty)
+    TextView emptyFavorites;
     @BindView(R.id.loading_indicator)
     ProgressBar loading;
 
@@ -75,7 +85,7 @@ public class MovieListActivity extends AppCompatActivity
     private void loadMovies(MoviesAdapter.MoviesAdapterClickListener listener, Call<MovieList> call) {
         call.enqueue(new Callback<MovieList>() {
             @Override
-            public void onResponse(Call<MovieList> call, Response<MovieList> response) {
+            public void onResponse(@NonNull Call<MovieList> call, @NonNull Response<MovieList> response) {
                 movies = response.body().getResults();
                 adapter = new MoviesAdapter(movies, R.layout.movie_list_item,
                         getApplicationContext(), listener);
@@ -87,7 +97,7 @@ public class MovieListActivity extends AppCompatActivity
             }
 
             @Override
-            public void onFailure(Call<MovieList> call, Throwable t) {
+            public void onFailure(@NonNull Call<MovieList> call, @NonNull Throwable t) {
                 Log.e(TAG, "Failure: " + t.toString());
             }
         });
@@ -130,16 +140,105 @@ public class MovieListActivity extends AppCompatActivity
         if (itemId == R.id.sort_by_rating) {
             loadMovies(this, getSortByCall(SortType.TOP_RATED));
             sortedBy = SortType.TOP_RATED;
-            return true;
         } else if (itemId == R.id.sort_by_popularity) {
             loadMovies(this, getSortByCall(SortType.POPULAR));
-            sortedBy = SortType.POPULAR;
-            return true;
         } else if (itemId == R.id.show_favorites) {
-            // TODO implement favorites
-            return true;
+            loading.setVisibility(View.VISIBLE);
+            getLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
+        return new AsyncTaskLoader<List<Movie>>(this) {
+
+            List<Movie> movies = null;
+
+            @Override
+            protected void onStartLoading() {
+                if (movies != null)
+                    deliverResult(movies);
+                else
+                    forceLoad();
+            }
+
+            @Override
+            public List<Movie> loadInBackground() {
+                try {
+                    Cursor cursor = getContext().getContentResolver().query(
+                            MovieContract.MovieEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+                    if (cursor == null) {
+                        return null;
+                    }
+
+                    movies = convertCursorToMovieList(cursor);
+                    return movies;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            public void deliverResult(List<Movie> data) {
+                movies = data;
+                super.deliverResult(data);
+            }
+
+            private List<Movie> convertCursorToMovieList(@NonNull Cursor cursor) {
+                int numRows = cursor.getCount();
+
+                if (numRows == 0) {
+                    return new ArrayList<>(0);
+                }
+
+                List<Movie> movies = new ArrayList<>(numRows);
+
+                int idIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ID);
+                int titleIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TITLE);
+                int overviewIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_OVERVIEW);
+                int posterPathIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH);
+                int dateIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
+                int voteAverageIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
+
+                cursor.moveToFirst();
+
+                Integer id = cursor.getInt(idIndex);
+                String title = cursor.getString(titleIndex);
+                String overview = cursor.getString(overviewIndex);
+                String posterPath = cursor.getString(posterPathIndex);
+                String releaseDate = cursor.getString(dateIndex);
+                Double voteAverage = cursor.getDouble(voteAverageIndex);
+
+                do {
+                    movies.add(new Movie(posterPath, overview, releaseDate, id, title, voteAverage));
+                } while (cursor.moveToNext());
+
+                return movies;
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+        loading.setVisibility(View.GONE);
+        if (movies == null || movies.size() == 0) {
+            emptyFavorites.setVisibility(View.VISIBLE);
+            return;
+        }
+        loading.setVisibility(View.GONE);
+        adapter.setMovieData(movies);
+        movieList.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Movie>> loader) {
+
     }
 
     private enum SortType {
