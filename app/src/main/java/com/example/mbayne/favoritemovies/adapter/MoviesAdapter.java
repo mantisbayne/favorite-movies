@@ -51,25 +51,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         Movie movie = movies.get(position);
 
         Picasso.Builder builder = new Picasso.Builder(context);
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-            }
-        });
         builder.build().load(movie.getPosterPath())
                 .noFade()
                 .error(R.drawable.ic_error_outline_black)
-                .into(holder.poster, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+                .into(holder.poster);
     }
 
     @Override

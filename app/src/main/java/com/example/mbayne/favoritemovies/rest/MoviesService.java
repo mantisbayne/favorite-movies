@@ -1,6 +1,5 @@
 package com.example.mbayne.favoritemovies.rest;
 
-import com.example.mbayne.favoritemovies.model.Movie;
 import com.example.mbayne.favoritemovies.model.MovieList;
 import com.example.mbayne.favoritemovies.model.ReviewList;
 import com.example.mbayne.favoritemovies.model.TrailerList;

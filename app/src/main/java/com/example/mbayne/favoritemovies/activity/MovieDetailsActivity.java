@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +32,6 @@ import com.example.mbayne.favoritemovies.rest.MoviesService;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -176,8 +174,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
             contentValues.put(MovieContract.MovieEntry.COLUMN_ID, movie.getId());
             contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
             contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-            contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
-            contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getSimplePosterPath());
+            contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getSimpleReleaseDate());
             contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
 
             Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);

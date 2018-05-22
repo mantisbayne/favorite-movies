@@ -2,7 +2,6 @@ package com.example.mbayne.favoritemovies.activity;
 
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -140,11 +139,14 @@ public class MovieListActivity extends AppCompatActivity
         if (itemId == R.id.sort_by_rating) {
             loadMovies(this, getSortByCall(SortType.TOP_RATED));
             sortedBy = SortType.TOP_RATED;
+            return true;
         } else if (itemId == R.id.sort_by_popularity) {
             loadMovies(this, getSortByCall(SortType.POPULAR));
+            return true;
         } else if (itemId == R.id.show_favorites) {
             loading.setVisibility(View.VISIBLE);
             getLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -206,18 +208,16 @@ public class MovieListActivity extends AppCompatActivity
                 int dateIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
                 int voteAverageIndex = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
 
-                cursor.moveToFirst();
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                    Integer id = cursor.getInt(idIndex);
+                    String title = cursor.getString(titleIndex);
+                    String overview = cursor.getString(overviewIndex);
+                    String posterPath = cursor.getString(posterPathIndex);
+                    String releaseDate = cursor.getString(dateIndex);
+                    Double voteAverage = cursor.getDouble(voteAverageIndex);
 
-                Integer id = cursor.getInt(idIndex);
-                String title = cursor.getString(titleIndex);
-                String overview = cursor.getString(overviewIndex);
-                String posterPath = cursor.getString(posterPathIndex);
-                String releaseDate = cursor.getString(dateIndex);
-                Double voteAverage = cursor.getDouble(voteAverageIndex);
-
-                do {
                     movies.add(new Movie(posterPath, overview, releaseDate, id, title, voteAverage));
-                } while (cursor.moveToNext());
+                }
 
                 return movies;
             }
@@ -229,16 +229,16 @@ public class MovieListActivity extends AppCompatActivity
         loading.setVisibility(View.GONE);
         if (movies == null || movies.size() == 0) {
             emptyFavorites.setVisibility(View.VISIBLE);
-            return;
+            movieList.setVisibility(View.GONE);
+        } else {
+            adapter.setMovieData(movies);
+            movieList.setVisibility(View.VISIBLE);
         }
-        loading.setVisibility(View.GONE);
-        adapter.setMovieData(movies);
-        movieList.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Movie>> loader) {
-
+        // not used
     }
 
     private enum SortType {

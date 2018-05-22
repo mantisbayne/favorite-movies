@@ -93,12 +93,20 @@ public class Movie implements Parcelable {
         return POSTER_BASE_URL + posterPath;
     }
 
+    public String getSimplePosterPath() {
+        return posterPath;
+    }
+
     public String getOverview() {
         return overview;
     }
 
     public String getReleaseDate() {
         return releaseDate.substring(0, releaseDate.indexOf('-'));
+    }
+
+    public String getSimpleReleaseDate() {
+        return releaseDate;
     }
 
     public Integer getId() {
