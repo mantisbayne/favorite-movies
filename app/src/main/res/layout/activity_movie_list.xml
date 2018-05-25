@@ -15,10 +15,13 @@
         android:id="@+id/movies_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/medium_margin"
         android:text="@string/error_message"
         android:textSize="@dimen/subhead_text"
-        android:visibility="invisible" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:drawableTop="@drawable/ic_error_outline_black"
+        android:drawablePadding="@dimen/medium_margin"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/favorites_empty"
@@ -28,6 +31,7 @@
         android:layout_marginEnd="@dimen/medium_margin"
         android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/medium_margin"
+        android:layout_gravity="center"
         android:text="@string/no_favorites"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:drawableTop="@drawable/ic_favorite_border"

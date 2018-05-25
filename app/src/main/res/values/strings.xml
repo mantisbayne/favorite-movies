@@ -3,23 +3,22 @@
     <string name="sort_menu">Sort by</string>
     <string name="error_message">Sorry, there was an error.  Please restart the app to try again.</string>
     <string name="popularity">Popularity</string>
+    <string name="popular">Popular</string>
     <string name="rating">Rating</string>
     <string name="title_movie_detail">Movie Details</string>
     <string name="release_date">Release date</string>
     <string name="favorite">Add favorite: </string>
     <string name="reviews">Reviews</string>
     <string name="trailers">Trailers</string>
-
-    <!--No Favorites View-->
     <string name="no_favorites">No Favorites</string>
-
-    <!--Accesibility-->
     <string name="favorite_movie">Favorite Movie</string>
     <string name="movie_poster">Movie Poster</string>
     <string name="favorites">Favorites</string>
+    <string name="top_rated">Top Rated</string>
     <string name="removed_from_favorites">has been removed from your favorites</string>
     <string name="added_to_favorites">Added to favorites!</string>
     <string name="play_trailer_button">Play trailer button</string>
+    <string name="sorted_by_key">sorted_by</string>
 
     <string name="sort_by_popular">popular</string>
     <string name="sort_by_top_rated">top_rated</string>
