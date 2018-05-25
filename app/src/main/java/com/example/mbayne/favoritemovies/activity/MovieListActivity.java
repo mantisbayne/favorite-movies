@@ -1,7 +1,9 @@
 package com.example.mbayne.favoritemovies.activity;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -17,9 +19,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mbayne.favoritemovies.BuildConfig;
 import com.example.mbayne.favoritemovies.R;
+import com.example.mbayne.favoritemovies.Utils;
 import com.example.mbayne.favoritemovies.adapter.MoviesAdapter;
 import com.example.mbayne.favoritemovies.data.MovieContract;
 import com.example.mbayne.favoritemovies.model.Movie;
@@ -69,26 +73,36 @@ public class MovieListActivity extends AppCompatActivity
         movieList.setLayoutManager(layoutManager);
         movieList.setHasFixedSize(true);
 
-        MoviesAdapter.MoviesAdapterClickListener listener = this::handleMovieItemClick;
-
         if (savedInstanceState == null)
             sortedBy = SortType.POPULAR;
         else
             sortedBy = (SortType) savedInstanceState.getSerializable(STATE_SORTED_BY);
+        Context context = getApplicationContext();
 
-        Call<MovieList> defaultCall = getSortByCall(sortedBy);
-
-        loadMovies(listener, defaultCall);
+        if (Utils.isNetworkAvailable(context)) {
+            Call<MovieList> defaultCall = getSortByCall(sortedBy);
+            loadMovies(defaultCall);
+        } else {
+            getLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
+            Toast.makeText(context, R.string.no_network, Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void loadMovies(MoviesAdapter.MoviesAdapterClickListener listener, Call<MovieList> call) {
+    private void loadMovies(Call<MovieList> call) {
         call.enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(@NonNull Call<MovieList> call, @NonNull Response<MovieList> response) {
                 movies = response.body().getResults();
-                adapter = new MoviesAdapter(movies, R.layout.movie_list_item,
-                        getApplicationContext(), listener);
 
+                if (movies == null) {
+                    movieList.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.VISIBLE);
+                }
+
+                adapter = new MoviesAdapter(movies, R.layout.movie_list_item,
+                        getApplicationContext(), position -> {
+                            handleMovieItemClick(position);
+                        });
                 movieList.setAdapter(adapter);
 
                 loading.setVisibility(View.GONE);
@@ -114,7 +128,7 @@ public class MovieListActivity extends AppCompatActivity
         return call;
     }
 
-    private void handleMovieItemClick(int position) {
+    protected void handleMovieItemClick(int position) {
         movie = adapter.getItem(position);
         Intent detailsIntent = new Intent(this, MovieDetailsActivity.class);
         detailsIntent.putExtra(EXTRA_MOVIE, movie);
@@ -123,7 +137,7 @@ public class MovieListActivity extends AppCompatActivity
 
     @Override
     public void onMovieItemClick(int position) {
-        // not needed
+        handleMovieItemClick(position);
     }
 
     @Override
@@ -137,11 +151,11 @@ public class MovieListActivity extends AppCompatActivity
         int itemId = item.getItemId();
 
         if (itemId == R.id.sort_by_rating) {
-            loadMovies(this, getSortByCall(SortType.TOP_RATED));
+            loadMovies(getSortByCall(SortType.TOP_RATED));
             sortedBy = SortType.TOP_RATED;
             return true;
         } else if (itemId == R.id.sort_by_popularity) {
-            loadMovies(this, getSortByCall(SortType.POPULAR));
+            loadMovies(getSortByCall(SortType.POPULAR));
             return true;
         } else if (itemId == R.id.show_favorites) {
             loading.setVisibility(View.VISIBLE);
@@ -151,6 +165,7 @@ public class MovieListActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
         return new AsyncTaskLoader<List<Movie>>(this) {
@@ -181,6 +196,8 @@ public class MovieListActivity extends AppCompatActivity
                     movies = convertCursorToMovieList(cursor);
                     return movies;
                 } catch (Exception e) {
+                    movieList.setVisibility(View.GONE);
+                    errorMessage.setVisibility(View.VISIBLE);
                     e.printStackTrace();
                     return null;
                 }
